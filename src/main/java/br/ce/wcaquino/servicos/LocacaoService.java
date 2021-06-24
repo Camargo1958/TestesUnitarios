@@ -33,7 +33,7 @@ public class LocacaoService {
 		
 		//Cenário
 		LocacaoService service = new LocacaoService();
-		Usuario usuario = new Usuario("Antonio Carlos");
+		Usuario usuario = new Usuario("Pedro Carlos");
 		Filme filme = new Filme("O Corvo", 2, 3.50);
 		
 		//Ação
