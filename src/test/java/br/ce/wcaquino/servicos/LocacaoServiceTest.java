@@ -8,7 +8,9 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.After;
@@ -174,6 +176,35 @@ public class LocacaoServiceTest {
 		//Ação
 		service.alugarFilme(usuario,filme);
 
+	}
+	
+	@Test
+	public void testeLocacaoMultipla() throws Exception {
+		//Cenário
+		Usuario usuario = new Usuario("John Wayne");
+		Filme filme1 = new Filme("Por um punhado de dolares", 3, 6.0);
+		Filme filme2 = new Filme("A volta dos que nao foram", 4, 5.5);
+		Filme filme3 = new Filme("Poeiras em alto mar", 6, 4.0);
+		Filme filme4 = new Filme("Cisco Kid", 7, 6.3);
+		Filme filme5 = new Filme("Dolares na cueca", 1, 8.1);
+		
+		List<Filme> filmes = new ArrayList<Filme>();
+		filmes.add(filme1);
+		filmes.add(filme2);
+		filmes.add(filme3);
+		filmes.add(filme4);
+		filmes.add(filme5);
+		
+		//Ação
+	    List<Locacao> locacoes = service.alugarFilmes(usuario,filmes);
+		
+	    int i;
+	    for(i=0; i<locacoes.size();i++) {
+		//Verificação
+	    error.checkThat(locacoes.get(i).getValor(), is(equalTo(filmes.get(i).getPrecoLocacao())));
+	    error.checkThat(isMesmaData(locacoes.get(i).getDataLocacao(), new Date()), is(true));
+	    error.checkThat(isMesmaData(DataUtils.obterDataComDiferencaDias(1), locacoes.get(i).getDataRetorno()), is(true));
+	    }
 	}
 	
 }

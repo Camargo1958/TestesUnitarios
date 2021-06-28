@@ -2,7 +2,9 @@ package br.ce.wcaquino.servicos;
 
 import static br.ce.wcaquino.utils.DataUtils.adicionarDias;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import br.ce.wcaquino.entidades.Filme;
 import br.ce.wcaquino.entidades.Locacao;
@@ -41,6 +43,19 @@ public class LocacaoService {
 		//TODO adicionar método para salvar
 		
 		return locacao;
+	}
+	
+	public List<Locacao> alugarFilmes(Usuario usuario, List<Filme> filmes) throws FilmeSemEstoqueException, LocadoraException {
+		List<Locacao> locacoes = new ArrayList<Locacao>();
+		
+		Locacao locacao = new Locacao();
+		
+		int i;
+		for(i=0; i<filmes.size();i++) {
+			locacoes.add(alugarFilme(usuario, filmes.get(i)));
+		}
+		
+		return locacoes;
 	}
 	
 	public static void main(String[] args) {
