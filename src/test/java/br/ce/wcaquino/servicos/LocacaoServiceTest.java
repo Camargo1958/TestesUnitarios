@@ -11,27 +11,62 @@ import static org.junit.Assert.assertTrue;
 import java.util.Date;
 
 import org.hamcrest.CoreMatchers;
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
+import org.junit.rules.ExpectedException;
 
 import br.ce.wcaquino.entidades.Filme;
 import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
+import br.ce.wcaquino.exceptions.FilmeSemEstoqueException;
+import br.ce.wcaquino.exceptions.LocadoraException;
 import br.ce.wcaquino.servicos.LocacaoService;
 import br.ce.wcaquino.utils.DataUtils;
 
 public class LocacaoServiceTest {
 	
+	private LocacaoService service;
+//	private static int contador = 0;
+	
 	@Rule
 	public ErrorCollector error = new ErrorCollector();
+	
+	@Rule
+	public ExpectedException exception = ExpectedException.none();
+	
+	@Before
+	public void setup() {
+//		System.out.println("Before");
+		service = new LocacaoService();
+//		contador++;
+//		System.out.println("Testes executados: "+contador);
+	}
+	
+//	@After
+//	public void teardown() {
+//		System.out.println("After");
+//	}
+//	
+//	@BeforeClass
+//	public static void setupClass() {
+//		System.out.println("Before Class");
+//	}
+//	
+//	@AfterClass
+//	public static void teardownClass() {
+//		System.out.println("After Class");
+//	}
 
 	@Test
 	public void testeLocacao() throws Exception {
 		
 		//Cenário
-		LocacaoService service = new LocacaoService();
 		Usuario usuario = new Usuario("Pedro Carlos");
 		Filme filme = new Filme("O Corvo", 2, 3.50);
 		
@@ -67,7 +102,7 @@ public class LocacaoServiceTest {
 	    
 	}
 	
-	@Test(expected=Exception.class)
+	@Test(expected=FilmeSemEstoqueException.class) // Modo elegante
 	public void testeLocacao_filmeSemEstoque() throws Exception {
 		//Cenário
 		LocacaoService service = new LocacaoService();
@@ -78,4 +113,67 @@ public class LocacaoServiceTest {
 	    service.alugarFilme(usuario,filme);
 
 	}
+	
+//	@Test // Modo Robusto
+//	public void testeLocacao_filmeSemEstoque_2() {
+//		//Cenário
+//		LocacaoService service = new LocacaoService();
+//		Usuario usuario = new Usuario("Pedro Carlos");
+//		Filme filme = new Filme("O Corvo", 0, 3.50);
+//		
+//		//Ação
+//	    try {
+//			service.alugarFilme(usuario,filme);
+//			Assert.fail("Deveria ter lancado uma exececao");
+//		} catch (Exception e) {
+//			assertThat(e.getMessage(), is("Filme sem estoque"));
+//		}
+//
+//	}
+	
+//	@Test // Modo Novo
+//	public void testeLocacao_filmeSemEstoque_3() throws Exception {
+//		//Cenário
+//		LocacaoService service = new LocacaoService();
+//		Usuario usuario = new Usuario("Pedro Carlos");
+//		Filme filme = new Filme("O Corvo", 0, 3.50);
+//		
+//	    exception.expect(Exception.class);
+//	    exception.expectMessage("Filme sem estoque");
+//	    
+//		//Ação
+//	    service.alugarFilme(usuario,filme);
+//
+//	}
+	
+	@Test // Modo Robusto
+	public void testLocacao_usuarioVazio() throws FilmeSemEstoqueException {
+		//Cenário
+		Filme filme = new Filme("Por um punhado de dolares", 3, 6.0);
+		Usuario usuario = null;
+		
+		//Ação
+		try {
+			service.alugarFilme(usuario,filme);
+			Assert.fail();
+		} catch (LocadoraException e) {
+			assertThat(e.getMessage(), is("Usuario vazio"));
+		}
+
+	}
+	
+	@Test // Modo Novo
+	public void testLocacao_filmeVazio() throws FilmeSemEstoqueException, LocadoraException {
+		//Cenário
+		Filme filme = null;
+		Usuario usuario = new Usuario("John Doe");
+		
+	    exception.expect(LocadoraException.class);
+	    exception.expectMessage("Filme vazio");
+	    
+		//Ação
+		service.alugarFilme(usuario,filme);
+
+	}
+	
 }
