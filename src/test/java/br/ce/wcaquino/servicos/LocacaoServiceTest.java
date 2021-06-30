@@ -8,11 +8,14 @@ import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
@@ -42,7 +45,8 @@ public class LocacaoServiceTest {
 	
 
 	@Test
-	public void testeLocacao() throws Exception {
+	public void deveAlugarFilme() throws Exception {
+		Assume.assumeFalse(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
 		
 		//Cenário
 		Usuario usuario = new Usuario("Pedro Carlos");
@@ -59,7 +63,7 @@ public class LocacaoServiceTest {
 	}
 	
 	@Test(expected=FilmeSemEstoqueException.class) // Modo elegante
-	public void testeLocacao_filmeSemEstoque() throws Exception {
+	public void naoDeveAlugarFilmeSemEstoque() throws Exception {
 		//Cenário
 		LocacaoService service = new LocacaoService();
 		Usuario usuario = new Usuario("Pedro Carlos");
@@ -71,7 +75,7 @@ public class LocacaoServiceTest {
 	}
 	
 	@Test // Modo Robusto
-	public void testLocacao_usuarioVazio() throws FilmeSemEstoqueException {
+	public void naoDeveAlugarFilmeSemUsuario() throws FilmeSemEstoqueException {
 		//Cenário
 		List<Filme> filmes = Arrays.asList(new Filme("Por um punhado de dolares", 3, 6.0));
 		Usuario usuario = null;
@@ -87,7 +91,7 @@ public class LocacaoServiceTest {
 	}
 	
 	@Test // Modo Novo
-	public void testLocacao_filmeVazio() throws FilmeSemEstoqueException, LocadoraException {
+	public void naoDeveAlugarSemFilmeDefinido() throws FilmeSemEstoqueException, LocadoraException {
 		//Cenário
 		List<Filme> filmes = null;
 		Usuario usuario = new Usuario("John Doe");
@@ -101,21 +105,21 @@ public class LocacaoServiceTest {
 	}
 	
 	@Test
-	public void testeLocacaoMultipla() throws Exception {
+	public void deveAlugarMultiplosFilmes() throws Exception {
 		//Cenário
 		Usuario usuario = new Usuario("John Wayne");
 		Filme filme1 = new Filme("Por um punhado de dolares", 3, 6.0);
 		Filme filme2 = new Filme("A volta dos que nao foram", 4, 5.5);
-		Filme filme3 = new Filme("Poeiras em alto mar", 6, 4.0);
-		Filme filme4 = new Filme("Cisco Kid", 7, 6.3);
-		Filme filme5 = new Filme("Dolares na cueca", 1, 8.1);
+//		Filme filme3 = new Filme("Poeiras em alto mar", 6, 4.0);
+//		Filme filme4 = new Filme("Cisco Kid", 7, 6.3);
+//		Filme filme5 = new Filme("Dolares na cueca", 1, 8.1);
 		
 		List<Filme> filmes = new ArrayList<Filme>();
 		filmes.add(filme1);
 		filmes.add(filme2);
-		filmes.add(filme3);
-		filmes.add(filme4);
-		filmes.add(filme5);
+//		filmes.add(filme3);
+//		filmes.add(filme4);
+//		filmes.add(filme5);
 		
 		//Ação
 		Locacao locacao = service.alugarFilme(usuario,filmes);
@@ -138,4 +142,167 @@ public class LocacaoServiceTest {
 	    
 	}
 	
+	@Test
+	public void devemosPagar75PctNoFilme3() throws Exception {
+		//Cenário
+		Usuario usuario = new Usuario("John Wayne");
+		Filme filme1 = new Filme("Por um punhado de dolares", 3, 4.0);
+		Filme filme2 = new Filme("A volta dos que nao foram", 4, 4.0);
+		Filme filme3 = new Filme("Poeiras em alto mar", 6, 4.0);
+		
+		List<Filme> filmes = new ArrayList<Filme>();
+		filmes.add(filme1);
+		filmes.add(filme2);
+		filmes.add(filme3);
+		
+		//Ação
+		Locacao locacao = service.alugarFilme(usuario,filmes);
+		
+		List<Filme> filmesLocados = locacao.getFilmes();
+		
+		//Verificação
+		int i;
+	    Double valorTotal = 0d;
+	    Double precoLocacaoFilme = 0d;
+	    for(i=0; i<filmes.size(); i++) {
+	    	precoLocacaoFilme = filmes.get(i).getPrecoLocacao();
+	    	if(i==2) precoLocacaoFilme = precoLocacaoFilme * 0.75;
+	    	valorTotal = valorTotal + precoLocacaoFilme;
+	    }
+	    
+	    error.checkThat(locacao.getValor(), is(equalTo(valorTotal)));
+	    
+	}
+	
+	@Test
+	public void devemosPagar50PctNoFilme4() throws Exception {
+		//Cenário
+		Usuario usuario = new Usuario("John Wayne");
+		Filme filme1 = new Filme("Por um punhado de dolares", 3, 4.0);
+		Filme filme2 = new Filme("A volta dos que nao foram", 4, 4.0);
+		Filme filme3 = new Filme("Poeiras em alto mar", 6, 4.0);
+		Filme filme4 = new Filme("Filme 4", 2, 4.0);
+		
+		List<Filme> filmes = new ArrayList<Filme>();
+		filmes.add(filme1);
+		filmes.add(filme2);
+		filmes.add(filme3);
+		filmes.add(filme4);
+		
+		//Ação
+		Locacao locacao = service.alugarFilme(usuario,filmes);
+		
+		List<Filme> filmesLocados = locacao.getFilmes();
+		
+		//Verificação
+		int i;
+	    Double valorTotal = 0d;
+	    Double precoLocacaoFilme = 0d;
+	    for(i=0; i<filmes.size(); i++) {
+	    	precoLocacaoFilme = filmes.get(i).getPrecoLocacao();
+	    	if(i==2) precoLocacaoFilme = precoLocacaoFilme * 0.75;
+	    	if(i==3) precoLocacaoFilme = precoLocacaoFilme * 0.5;
+	    	valorTotal = valorTotal + precoLocacaoFilme;
+	    }
+	    
+	    error.checkThat(locacao.getValor(), is(equalTo(valorTotal)));
+	    
+	}
+	
+	@Test
+	public void devemosPagar25PctNoFilme5() throws Exception {
+		//Cenário
+		Usuario usuario = new Usuario("John Wayne");
+		Filme filme1 = new Filme("Por um punhado de dolares", 3, 4.0);
+		Filme filme2 = new Filme("A volta dos que nao foram", 4, 4.0);
+		Filme filme3 = new Filme("Poeiras em alto mar", 6, 4.0);
+		Filme filme4 = new Filme("Filme 4", 2, 4.0);
+		Filme filme5 = new Filme("Filme 5", 1, 4.0);
+		
+		List<Filme> filmes = new ArrayList<Filme>();
+		filmes.add(filme1);
+		filmes.add(filme2);
+		filmes.add(filme3);
+		filmes.add(filme4);
+		filmes.add(filme5);
+		
+		//Ação
+		Locacao locacao = service.alugarFilme(usuario,filmes);
+		
+		List<Filme> filmesLocados = locacao.getFilmes();
+		
+		//Verificação
+		int i;
+	    Double valorTotal = 0d;
+	    Double precoLocacaoFilme = 0d;
+	    for(i=0; i<filmes.size(); i++) {
+	    	precoLocacaoFilme = filmes.get(i).getPrecoLocacao();
+	    	if(i==2) precoLocacaoFilme = precoLocacaoFilme * 0.75;
+	    	if(i==3) precoLocacaoFilme = precoLocacaoFilme * 0.5;
+	    	if(i==4) precoLocacaoFilme = precoLocacaoFilme * 0.25;
+	    	valorTotal = valorTotal + precoLocacaoFilme;
+	    }
+	    
+	    error.checkThat(locacao.getValor(), is(equalTo(valorTotal)));
+	    
+	}
+	
+	@Test
+	public void devemosPagar0PctNoFilme6() throws Exception {
+		//Cenário
+		Usuario usuario = new Usuario("John Wayne");
+		Filme filme1 = new Filme("Por um punhado de dolares", 3, 4.0);
+		Filme filme2 = new Filme("A volta dos que nao foram", 4, 4.0);
+		Filme filme3 = new Filme("Poeiras em alto mar", 6, 4.0);
+		Filme filme4 = new Filme("Filme 4", 2, 4.0);
+		Filme filme5 = new Filme("Filme 5", 1, 4.0);
+		Filme filme6 = new Filme("Filme 6", 7, 4.0);
+		
+		List<Filme> filmes = new ArrayList<Filme>();
+		filmes.add(filme1);
+		filmes.add(filme2);
+		filmes.add(filme3);
+		filmes.add(filme4);
+		filmes.add(filme5);
+		filmes.add(filme6);
+		
+		//Ação
+		Locacao locacao = service.alugarFilme(usuario,filmes);
+		
+		List<Filme> filmesLocados = locacao.getFilmes();
+		
+		//Verificação
+		int i;
+	    Double valorTotal = 0d;
+	    Double precoLocacaoFilme = 0d;
+	    for(i=0; i<filmes.size(); i++) {
+	    	precoLocacaoFilme = filmes.get(i).getPrecoLocacao();
+	    	if(i==2) precoLocacaoFilme = precoLocacaoFilme * 0.75;
+	    	if(i==3) precoLocacaoFilme = precoLocacaoFilme * 0.5;
+	    	if(i==4) precoLocacaoFilme = precoLocacaoFilme * 0.25;
+	    	if(i==5) precoLocacaoFilme = 0d;
+	    	valorTotal = valorTotal + precoLocacaoFilme;
+	    }
+	    
+	    error.checkThat(locacao.getValor(), is(equalTo(valorTotal)));
+	    
+	}
+	
+	@Test
+	public void deveDevolverNaSegundaAoAlugarNoSabado() throws FilmeSemEstoqueException, LocadoraException {
+		Assume.assumeTrue(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
+		
+		//Cenário
+		Usuario usuario = new Usuario("John Rutherford");
+		Filme filme1 = new Filme("Por um punhado de dolares", 3, 4.0);
+		List<Filme> filmes = new ArrayList<Filme>();
+		filmes.add(filme1);
+		
+		//Ação
+		Locacao locacao = service.alugarFilme(usuario,filmes);
+		
+		//Verificação
+		boolean ehSegunda = DataUtils.verificarDiaSemana(locacao.getDataRetorno(), Calendar.MONDAY);
+		Assert.assertTrue(ehSegunda);
+	}
 }
