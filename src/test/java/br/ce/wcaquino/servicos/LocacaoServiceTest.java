@@ -1,6 +1,10 @@
 package br.ce.wcaquino.servicos;
 
 
+import static br.ce.wcaquino.matchers.MatchersProprios.caiEm;
+import static br.ce.wcaquino.matchers.MatchersProprios.caiNumaSegunda;
+import static br.ce.wcaquino.matchers.MatchersProprios.ehHoje;
+import static br.ce.wcaquino.matchers.MatchersProprios.ehHojeComDiferencaDias;
 import static br.ce.wcaquino.utils.DataUtils.isMesmaData;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -15,7 +19,6 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
@@ -57,8 +60,10 @@ public class LocacaoServiceTest {
 			
 		//Verificação
 	    error.checkThat(locacao.getValor(), is(equalTo(3.5)));
-	    error.checkThat(isMesmaData(locacao.getDataLocacao(), new Date()), is(true));
-	    error.checkThat(isMesmaData(DataUtils.obterDataComDiferencaDias(1), locacao.getDataRetorno()), is(true));
+//	    error.checkThat(isMesmaData(locacao.getDataLocacao(), new Date()), is(true));
+	    error.checkThat(locacao.getDataLocacao(), ehHoje());
+//	    error.checkThat(isMesmaData(DataUtils.obterDataComDiferencaDias(1), locacao.getDataRetorno()), is(true));
+	    error.checkThat(locacao.getDataRetorno(), ehHojeComDiferencaDias(1));
     
 	}
 	
@@ -106,6 +111,8 @@ public class LocacaoServiceTest {
 	
 	@Test
 	public void deveAlugarMultiplosFilmes() throws Exception {
+		Assume.assumeFalse(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
+		
 		//Cenário
 		Usuario usuario = new Usuario("John Wayne");
 		Filme filme1 = new Filme("Por um punhado de dolares", 3, 6.0);
@@ -302,7 +309,11 @@ public class LocacaoServiceTest {
 		Locacao locacao = service.alugarFilme(usuario,filmes);
 		
 		//Verificação
-		boolean ehSegunda = DataUtils.verificarDiaSemana(locacao.getDataRetorno(), Calendar.MONDAY);
-		Assert.assertTrue(ehSegunda);
+//		boolean ehSegunda = DataUtils.verificarDiaSemana(locacao.getDataRetorno(), Calendar.MONDAY);
+//		Assert.assertTrue(ehSegunda);
+//		Assert.assertThat(locacao.getDataRetorno(), new DiaSemanaMatcher(Calendar.MONDAY));
+		Assert.assertThat(locacao.getDataRetorno(), caiEm(Calendar.MONDAY));
+		Assert.assertThat(locacao.getDataRetorno(), caiNumaSegunda());
+
 	}
 }
