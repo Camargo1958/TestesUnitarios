@@ -363,11 +363,17 @@ public class LocacaoServiceTest {
 	public void deveEnviarEmailParaLocacoesAtrasadas() {
 		//Ceanario
 		Usuario usuario = umUsuario().agora();
-		Usuario usuario2 = umUsuario().comNome("Usuario 2").agora();
+		Usuario usuario2 = umUsuario().comNome("Usuario em dia").agora();
+		Usuario usuario3 = umUsuario().comNome("Outro Usuario atrasado").agora();
 		List<Locacao> locacoes = Arrays.asList(
 				umLocacao()
-				.comUsuario(usuario)
-				.comDataRetorno(DataUtils.obterDataComDiferencaDias(-2)).agora()
+				.comUsuario(usuario).atrasado().agora(),
+				umLocacao()
+				.comUsuario(usuario2).agora(),
+				umLocacao()
+				.comUsuario(usuario3).atrasado().agora(),
+				umLocacao()
+				.comUsuario(usuario3).atrasado().agora()
 				);
 		when(dao.obterLocacoesPendentes()).thenReturn(locacoes);
 		
@@ -375,6 +381,11 @@ public class LocacaoServiceTest {
 		service.notificarAtrasos();
 		
 		//Verificacao
+		Mockito.verify(emailService, Mockito.times(3)).notificarAtraso(Mockito.any(Usuario.class));
 		Mockito.verify(emailService).notificarAtraso(usuario);
+		Mockito.verify(emailService, Mockito.atLeastOnce()).notificarAtraso(usuario3);
+		Mockito.verify(emailService, Mockito.never()).notificarAtraso(usuario2);
+		Mockito.verifyNoMoreInteractions(emailService);
+//		Mockito.verifyZeroInteractions(spc); // desnecessario
 	}
 }
