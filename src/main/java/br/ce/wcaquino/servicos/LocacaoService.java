@@ -13,7 +13,6 @@ import br.ce.wcaquino.entidades.Usuario;
 import br.ce.wcaquino.exceptions.FilmeSemEstoqueException;
 import br.ce.wcaquino.exceptions.LocadoraException;
 import br.ce.wcaquino.utils.DataUtils;
-import buildermaster.BuilderMaster;
 
 public class LocacaoService {
 	
@@ -82,21 +81,21 @@ public class LocacaoService {
 		}
 	}
 	
-	public void setLocacaoDAO(LocacaoDAO dao) {
-		this.dao = dao;
-	}
-	
-	public void setSPCService(SPCService spcService) {
-		this.spcService = spcService;
-	}
-	
-	public void setEmailService(EmailService emailService) {
-		this.emailService = emailService;
-	}
+//	public void setLocacaoDAO(LocacaoDAO dao) {
+//		this.dao = dao;
+//	}
+//	
+//	public void setSPCService(SPCService spcService) {
+//		this.spcService = spcService;
+//	}
+//	
+//	public void setEmailService(EmailService emailService) {
+//		this.emailService = emailService;
+//	}
 		
 	public static void main(String[] args) {
 		
-		new BuilderMaster().gerarCodigoClasse(Locacao.class);
+		//new BuilderMaster().gerarCodigoClasse(Locacao.class);
 	}
 
 
