@@ -27,8 +27,8 @@ public class AssertTest {
 		Usuario u3 = u2;
 		Usuario u4 = null;
 		
-		Assert.assertEquals(u1, u2); // usando método equals da classe Usuario
-		Assert.assertSame(u2, u3); // mesma instância?
+		Assert.assertEquals(u1, u2); // usando metodo equals da classe Usuario
+		Assert.assertSame(u2, u3); // mesma instancia?
 		Assert.assertNotSame(u1, u2);
 		Assert.assertTrue(u4 == null);
 		Assert.assertNull(u4);

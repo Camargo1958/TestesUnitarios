@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
+import org.mockito.Mockito;
 
 import br.ce.wcaquino.daos.LocacaoDAO;
 import br.ce.wcaquino.daos.LocacaoDAOFake;
@@ -25,6 +26,8 @@ import static org.hamcrest.CoreMatchers.is;
 public class CalculoValorLocacaoTest {
 	
 	private LocacaoService service;
+	private LocacaoDAO dao;
+	private SPCService spc;
 	
 	@Parameter
 	public List<Filme> filmes;
@@ -36,8 +39,10 @@ public class CalculoValorLocacaoTest {
 	@Before
 	public void setup() {
 		service = new LocacaoService();
-		LocacaoDAO dao = new LocacaoDAOFake();
+		dao = Mockito.mock(LocacaoDAO.class);
 		service.setLocacaoDAO(dao);
+		spc = Mockito.mock(SPCService.class);
+		service.setSPCService(spc);
 	}
 	
 	private static Filme filme1 = new Filme("Filme1",2,4.0);
@@ -62,13 +67,13 @@ public class CalculoValorLocacaoTest {
 	
 	@Test
 	public void deveCalcularValorLocacaoConsiderandoDescontos() throws Exception {
-		//Cenário
+		//Cenario
 		Usuario usuario = umUsuario().agora();
 
-		//Ação
+		//Acao
 		Locacao locacao = service.alugarFilme(usuario,filmes);
 		
-		//Verificação
+		//Verificacao
 	    
 	    Assert.assertThat(locacao.getValor(), is(valorLocacao));
 	    
