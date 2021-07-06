@@ -27,11 +27,13 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import br.ce.wcaquino.builders.LocacaoBuilder;
 import br.ce.wcaquino.daos.LocacaoDAO;
 import br.ce.wcaquino.entidades.Filme;
 import br.ce.wcaquino.entidades.Locacao;
@@ -336,7 +338,7 @@ public class LocacaoServiceTest {
 	}
 	
 	@Test
-	public void naoDeveAlugarFilmeParaNegativadoSPC() throws FilmeSemEstoqueException {
+	public void naoDeveAlugarFilmeParaNegativadoSPC() throws Exception {
 		//Cenario
 		Usuario usuario = umUsuario().agora();
 		Usuario usuario2 = umUsuario().comNome("Usuario 2").agora();
@@ -386,4 +388,40 @@ public class LocacaoServiceTest {
 		Mockito.verifyNoMoreInteractions(emailService);
 //		Mockito.verifyZeroInteractions(spc); // desnecessario
 	}
+	
+	@Test
+	public void deveTratarErroNoSPC() throws Exception {
+		//Cenario
+		Usuario usuario = umUsuario().agora();
+		List<Filme> filmes = Arrays.asList(umFilme().agora());
+		
+		when(spc.possuiNegativacao(usuario)).thenThrow(new Exception("Falha catastrofica"));
+		
+		//Verificacao
+		exception.expect(LocadoraException.class);
+		exception.expectMessage("Problemas com SPC, tente novamente");
+		
+		//Acao
+		service.alugarFilme(usuario, filmes);		
+		
+	}
+	
+	@Test
+	public void deveProrrogarUmaLocacao() {
+		//Cenario
+		Locacao locacao = LocacaoBuilder.umLocacao().agora();
+		
+		//Acao
+		service.prorrogarLocacao(locacao, 3);
+		
+		//Verificacao
+		ArgumentCaptor<Locacao> argCapt = ArgumentCaptor.forClass(Locacao.class);
+		Mockito.verify(dao).salvar(argCapt.capture());
+		Locacao locacaoRetornada = argCapt.getValue();
+		
+		error.checkThat(locacaoRetornada.getValor(), is(4.0*3));
+		error.checkThat(locacaoRetornada.getDataLocacao(), ehHoje());
+		error.checkThat(locacaoRetornada.getDataRetorno(), ehHojeComDiferencaDias(3));
+	}
+	
 }

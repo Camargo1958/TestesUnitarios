@@ -36,7 +36,15 @@ public class LocacaoService {
 			}
 		}
 		
-		if(spcService.possuiNegativacao(usuario)) {
+		boolean negativado;
+		
+		try {
+			negativado = spcService.possuiNegativacao(usuario);
+		} catch (Exception e) {
+			throw new LocadoraException("Problemas com SPC, tente novamente");
+		}
+		
+		if(negativado) {
 			throw new LocadoraException("Usuario negativado");
 		}
 		
@@ -64,6 +72,7 @@ public class LocacaoService {
 		if(DataUtils.verificarDiaSemana(dataEntrega, Calendar.SUNDAY)) {
 			dataEntrega = adicionarDias(dataEntrega, 1);
 		}
+		
 		locacao.setDataRetorno(dataEntrega);
 		
 		//Salvando a locacao...	
@@ -92,6 +101,16 @@ public class LocacaoService {
 //	public void setEmailService(EmailService emailService) {
 //		this.emailService = emailService;
 //	}
+	
+	public void prorrogarLocacao(Locacao locacao, int dias) {
+		Locacao novaLocacao = new Locacao();
+		novaLocacao.setUsuario(locacao.getUsuario());
+		novaLocacao.setFilmes(locacao.getFilmes());
+		novaLocacao.setDataLocacao(new Date());
+		novaLocacao.setDataRetorno(DataUtils.obterDataComDiferencaDias(dias));
+		novaLocacao.setValor(locacao.getValor() * dias);
+		dao.salvar(novaLocacao);
+	}
 		
 	public static void main(String[] args) {
 		
