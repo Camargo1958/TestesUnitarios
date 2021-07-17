@@ -20,7 +20,7 @@ public class LocacaoService {
 	private SPCService spcService;
 	private EmailService emailService;
 	
-	public Locacao alugarFilme(Usuario usuario, List<Filme> filmes) throws FilmeSemEstoqueException, LocadoraException  {
+	public Locacao alugarFilme(Usuario usuario, List<Filme> filmes) throws FilmeSemEstoqueException, LocadoraException {
 	
 		if(usuario == null) {
 			throw new LocadoraException("Usuario vazio");
@@ -31,7 +31,7 @@ public class LocacaoService {
 		}
 		
 		for(Filme filme: filmes) {
-			if(filme.getEstoque()==0) {
+			if(filme.getEstoque() == 0) {
 				throw new FilmeSemEstoqueException();
 			}
 		}
@@ -53,7 +53,7 @@ public class LocacaoService {
 		locacao.setUsuario(usuario);
 		locacao.setDataLocacao(new Date());
 		Double valorTotal = 0d;
-		for(int i=0; i < filmes.size(); i++) {
+		for(int i = 0; i < filmes.size(); i++) {
 			Filme filme = filmes.get(i);
 			Double valorFilme = filme.getPrecoLocacao();
 			switch(i) {
@@ -81,7 +81,7 @@ public class LocacaoService {
 		return locacao;
 	}
 	
-	public void notificarAtrasos() {
+	public void notificarAtrasos(){
 		List<Locacao> locacoes = dao.obterLocacoesPendentes();
 		for(Locacao locacao: locacoes) {
 			if(locacao.getDataRetorno().before(new Date())) {
@@ -112,10 +112,10 @@ public class LocacaoService {
 		dao.salvar(novaLocacao);
 	}
 		
-	public static void main(String[] args) {
+	// public static void main(String[] args) {
 		
-		//new BuilderMaster().gerarCodigoClasse(Locacao.class);
-	}
+		// new BuilderMaster().gerarCodigoClasse(Locacao.class);
+	// }
 
 
 }

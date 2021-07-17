@@ -11,12 +11,12 @@ public class CalculadoraTest {
 	private Calculadora calc;
 	
 	@Before
-	public void setup() {
+	public void setup(){
 		calc = new Calculadora();
 	}
 	
 	@Test
-	public void deveSomarDoisValores() {
+	public void deveSomarDoisValores(){
 		//cenario
 		int a = 5;
 		int b = 3;
@@ -30,7 +30,7 @@ public class CalculadoraTest {
 	}
 	
 	@Test
-	public void deveSubtrairDoisValores() {
+	public void deveSubtrairDoisValores(){
 		//cenario
 		int a = 7;
 		int b = 3;
@@ -44,7 +44,7 @@ public class CalculadoraTest {
 	}
 	
 	@Test
-	public void deveDividirDoisValores() throws NaoPodeDividirPorZeroException {
+	public void deveDividirDoisValores() throws NaoPodeDividirPorZeroException{
 		//cenario
 		int a = 6;
 		int b = 3;
@@ -58,7 +58,7 @@ public class CalculadoraTest {
 	}
 	
 	@Test(expected = NaoPodeDividirPorZeroException.class)
-	public void develancarExcecaoAoDividirPorZero() throws NaoPodeDividirPorZeroException {
+	public void deveLancarExcecaoAoDividirPorZero() throws NaoPodeDividirPorZeroException {
 		//cenario
 		int a = 10;
 		int b = 0;

@@ -8,7 +8,7 @@ public class MatchersProprios {
 		return new DiaSemanaMatcher(diaSemana);
 	}
 	
-	public static DiaSemanaMatcher caiNumaSegunda() {
+	public static DiaSemanaMatcher caiNumaSegunda(){
 		return new DiaSemanaMatcher(Calendar.MONDAY);
 	}
 	

@@ -1,7 +1,5 @@
 package br.ce.wcaquino.entidades;
 
-import java.util.Objects;
-
 public class Usuario {
 
 	private String nome;
@@ -22,7 +20,10 @@ public class Usuario {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(nome);
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((nome == null) ? 0 : nome.hashCode());
+		return result;
 	}
 
 	@Override
@@ -34,7 +35,12 @@ public class Usuario {
 		if (getClass() != obj.getClass())
 			return false;
 		Usuario other = (Usuario) obj;
-		return Objects.equals(nome, other.nome);
+		if (nome == null) {
+			if (other.nome != null)
+				return false;
+		} else if (!nome.equals(other.nome))
+			return false;
+		return true;
 	}
 
 	@Override

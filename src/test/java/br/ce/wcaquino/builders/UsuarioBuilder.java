@@ -6,11 +6,9 @@ public class UsuarioBuilder {
 	
 	private Usuario usuario;
 	
-	private UsuarioBuilder() {
-		
-	}
+	private UsuarioBuilder() {}
 	
-	public static UsuarioBuilder umUsuario() {
+	public static UsuarioBuilder umUsuario(){
 		UsuarioBuilder builder = new UsuarioBuilder();
 		builder.usuario = new Usuario();
 		builder.usuario.setNome("Usuario 1");
@@ -23,7 +21,7 @@ public class UsuarioBuilder {
 		return this;
 	}
 	
-	public Usuario agora() {
+	public Usuario agora(){
 		return usuario;
 	}
 	
