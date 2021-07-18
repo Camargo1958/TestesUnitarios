@@ -15,39 +15,39 @@ import br.ce.wcaquino.exceptions.LocadoraException;
 import br.ce.wcaquino.utils.DataUtils;
 
 public class LocacaoService {
-	
+
 	private LocacaoDAO dao;
 	private SPCService spcService;
 	private EmailService emailService;
-	
+
 	public Locacao alugarFilme(Usuario usuario, List<Filme> filmes) throws FilmeSemEstoqueException, LocadoraException {
-	
+
 		if(usuario == null) {
 			throw new LocadoraException("Usuario vazio");
 		}
-		
+
 		if(filmes == null || filmes.isEmpty()) {
 			throw new LocadoraException("Filme vazio");
 		}
-		
+
 		for(Filme filme: filmes) {
 			if(filme.getEstoque() == 0) {
 				throw new FilmeSemEstoqueException();
 			}
 		}
-		
+
 		boolean negativado;
-		
+
 		try {
 			negativado = spcService.possuiNegativacao(usuario);
 		} catch (Exception e) {
 			throw new LocadoraException("Problemas com SPC, tente novamente");
 		}
-		
+
 		if(negativado) {
 			throw new LocadoraException("Usuario negativado");
 		}
-		
+
 		Locacao locacao = new Locacao();
 		locacao.setFilmes(filmes);
 		locacao.setUsuario(usuario);
@@ -61,22 +61,18 @@ public class LocacaoService {
 		if(DataUtils.verificarDiaSemana(dataEntrega, Calendar.SUNDAY)) {
 			dataEntrega = adicionarDias(dataEntrega, 1);
 		}
-		
-		locacao.setDataRetorno(dataEntrega);
-		
-		//Salvando a locacao...	
-		dao.salvar(locacao);
-		
-		return locacao;
-	}
 
-	protected Date obterData() {
-		return new Date();
+		locacao.setDataRetorno(dataEntrega);
+
+		//Salvando a locacao...
+		dao.salvar(locacao);
+
+		return locacao;
 	}
 
 	private Double calcularValorLocacao(List<Filme> filmes) {
 		System.out.println("Estou calculando.");
-		Double valorTotal = 0d;
+		double valorTotal = 0d;
 		for(int i = 0; i < filmes.size(); i++) {
 			Filme filme = filmes.get(i);
 			Double valorFilme = filme.getPrecoLocacao();
@@ -90,7 +86,7 @@ public class LocacaoService {
 		}
 		return valorTotal;
 	}
-	
+
 	public void notificarAtrasos(){
 		List<Locacao> locacoes = dao.obterLocacoesPendentes();
 		for(Locacao locacao: locacoes) {
@@ -99,19 +95,23 @@ public class LocacaoService {
 			}
 		}
 	}
-	
+
+	protected Date obterData() {
+		return new Date();
+	}
+
 //	public void setLocacaoDAO(LocacaoDAO dao) {
 //		this.dao = dao;
 //	}
-//	
+//
 //	public void setSPCService(SPCService spcService) {
 //		this.spcService = spcService;
 //	}
-//	
+//
 //	public void setEmailService(EmailService emailService) {
 //		this.emailService = emailService;
 //	}
-	
+
 	public void prorrogarLocacao(Locacao locacao, int dias) {
 		Locacao novaLocacao = new Locacao();
 		novaLocacao.setUsuario(locacao.getUsuario());
@@ -121,9 +121,9 @@ public class LocacaoService {
 		novaLocacao.setValor(locacao.getValor() * dias);
 		dao.salvar(novaLocacao);
 	}
-		
+
 	// public static void main(String[] args) {
-		
+
 		// new BuilderMaster().gerarCodigoClasse(Locacao.class);
 	// }
 

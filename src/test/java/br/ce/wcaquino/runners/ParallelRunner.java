@@ -10,21 +10,11 @@ import org.junit.runners.model.RunnerScheduler;
 
 public class ParallelRunner extends BlockJUnit4ClassRunner{
 
-	public ParallelRunner(Class<?> klass) throws InitializationError {
-		super(klass);
-		setScheduler(new ThreadPoll());
-	}
-
 	private static class ThreadPoll implements RunnerScheduler {
 		private ExecutorService executor;
-				
+
 		public ThreadPoll() {
 			executor = Executors.newFixedThreadPool(5);
-		}
-
-		@Override
-		public void schedule(Runnable run) {
-			executor.submit(run);
 		}
 
 		@Override
@@ -37,6 +27,16 @@ public class ParallelRunner extends BlockJUnit4ClassRunner{
 				throw new RuntimeException();
 			}
 		}
-		
+
+		@Override
+		public void schedule(Runnable run) {
+			executor.submit(run);
+		}
+
+	}
+
+	public ParallelRunner(Class<?> klass) throws InitializationError {
+		super(klass);
+		setScheduler(new ThreadPoll());
 	}
 }

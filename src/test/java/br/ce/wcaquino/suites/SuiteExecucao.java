@@ -6,8 +6,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import br.ce.wcaquino.servicos.CalculadoraMockTest;
-import br.ce.wcaquino.servicos.CalculadoraTest;
 import br.ce.wcaquino.servicos.CalculoValorLocacaoTest;
 import br.ce.wcaquino.servicos.LocacaoServiceTest;
 
@@ -21,14 +19,14 @@ import br.ce.wcaquino.servicos.LocacaoServiceTest;
 
 public class SuiteExecucao {
 	//Remova se puder
-	
-	@BeforeClass
-	public static void before() {
-		System.out.println("Before");
-	}
-	
+
 	@AfterClass
 	public static void after() {
 		System.out.println("After");
+	}
+
+	@BeforeClass
+	public static void before() {
+		System.out.println("Before");
 	}
 }

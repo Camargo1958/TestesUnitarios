@@ -12,6 +12,7 @@
   </properties>
   
    <build>
+   	<testSourceDirectory>src</testSourceDirectory>
   	<plugins>
   		<plugin>
   			<groupId>org.apache.maven.plugins</groupId>
@@ -20,6 +21,19 @@
   			<configuration>
   				<source>${maven-compiler.source}</source>
   				<target>${mavem-compiler.target}</target>
+  			</configuration>
+  		</plugin>
+  		<plugin>
+  			<groupId>org.apache.maven.plugins</groupId>
+  			<artifactId>maven-surefire-plugin</artifactId>
+  			<version>2.18.1</version>
+  			<configuration>
+  				<includes>
+  					<include>br/ce/wcaquino/servicos/*.java</include>
+  				</includes>
+<!--   				<threadCount>5</threadCount> -->
+  				<useUnlimitedThreads>true</useUnlimitedThreads>
+  				<parallel>all</parallel>
   			</configuration>
   		</plugin>
   	</plugins>

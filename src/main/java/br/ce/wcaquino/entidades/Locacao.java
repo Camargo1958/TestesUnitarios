@@ -10,36 +10,36 @@ public class Locacao {
 	private Date dataLocacao;
 	private Date dataRetorno;
 	private Double valor;
-	
-	public Usuario getUsuario() {
-		return usuario;
-	}
-	public void setUsuario(Usuario usuario) {
-		this.usuario = usuario;
-	}
+
 	public Date getDataLocacao() {
 		return dataLocacao;
-	}
-	public void setDataLocacao(Date dataLocacao) {
-		this.dataLocacao = dataLocacao;
 	}
 	public Date getDataRetorno() {
 		return dataRetorno;
 	}
-	public void setDataRetorno(Date dataRetorno) {
-		this.dataRetorno = dataRetorno;
+	public List<Filme> getFilmes() {
+		return filmes;
+	}
+	public Usuario getUsuario() {
+		return usuario;
 	}
 	public Double getValor() {
 		return valor;
 	}
-	public void setValor(Double valor) {
-		this.valor = valor;
+	public void setDataLocacao(Date dataLocacao) {
+		this.dataLocacao = dataLocacao;
 	}
-	public List<Filme> getFilmes() {
-		return filmes;
+	public void setDataRetorno(Date dataRetorno) {
+		this.dataRetorno = dataRetorno;
 	}
 	public void setFilmes(List<Filme> filmes) {
 		this.filmes = filmes;
+	}
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
+	public void setValor(Double valor) {
+		this.valor = valor;
 	}
 
 }
